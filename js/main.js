@@ -2,7 +2,7 @@ const root = document.getElementById("root");
 let LEVEL = "Easy";
 let COUNT_USER = 0;
 let COUNT_COMPUTER = 0;
-let TIME_COUNT = 10;
+let TIME_COUNT = 100;
 
 function createMenu() {
   root.innerHTML = `
@@ -53,9 +53,11 @@ function getLogic() {
   if (LEVEL === "Advanced") {
     multiplicative = 100;
     multiple = 100;
+    TIME_COUNT = 150;
   } else if (LEVEL === "Complicated") {
     multiplicative = 1000;
     multiple = 1000;
+    TIME_COUNT = 200;
   }
   const valueFirst = Math.ceil(Math.random() * multiplicative);
   const valueSecond = Math.ceil(Math.random() * multiple);
@@ -82,7 +84,6 @@ function getLogic() {
   }
   createGameBoard(obj);
   answerBtn(valueFirst * valueSecond);
-  gameTime();
 }
 function createGame() {
   const levelBtn = document.querySelector(".button_div").children;
@@ -92,26 +93,47 @@ function createGame() {
       if (item.textContent === "Advanced") {
         LEVEL = "Advanced";
         getLogic();
+        gameTime();
       } else if (item.textContent === "Complicated") {
         LEVEL = "Complicated";
         getLogic();
+        gameTime();
       } else {
         LEVEL = "Easy";
         getLogic();
+        gameTime();
       }
     });
   });
 }
 function answerBtn(correctAnswer) {
   const answerBtnParentDiv = document.querySelector(".answer").children;
+
   const answerBtnFinalArray = [...answerBtnParentDiv];
   answerBtnFinalArray.forEach((item) => {
     item.addEventListener("click", () => {
       if (Number(item.textContent) === correctAnswer) {
+        root.style.cssText = `
+        background-color:green
+        `;
+        setTimeout(() => {
+          root.style.cssText = `
+        background-color:#222
+        `;
+        }, 500);
+
         COUNT_USER++;
         getLogic();
         createAnswer(COUNT_USER, COUNT_COMPUTER);
       } else {
+        root.style.cssText = `
+        background-color:#AA0114
+        `;
+        setTimeout(() => {
+          root.style.cssText = `
+        background-color:#222
+        `;
+        }, 500);
         COUNT_COMPUTER++;
         getLogic();
         createAnswer(COUNT_USER, COUNT_COMPUTER);
@@ -130,10 +152,10 @@ function createAnswer(user, computer) {
 function modal() {
   let win = "There is no winner";
   if (COUNT_USER < COUNT_COMPUTER) {
-    win = "Computer" + COUNT_COMPUTER;
+    win = `Computer  ${COUNT_COMPUTER}`;
   }
   if (COUNT_USER > COUNT_COMPUTER) {
-    win = "User" + COUNT_USER;
+    win = `User  ${COUNT_USER}`;
   }
   root.innerHTML = `
     <div class="modal_box">
@@ -157,7 +179,10 @@ function time(secund) {
   const div = document.querySelector(".timeDiv");
   const h2 = document.createElement("h2");
 
-  h2.textContent = `Time${secund < 10 ? "0" + secund : secund}`;
+  h2.textContent = `${secund < 10 ? "0" + secund : secund}`;
+  div.style.cssText = `
+    background-color:${secund < 10 ? "red" : "green"}
+  `;
   div.innerHTML = "";
   div.append(h2);
   if (secund === 0) {
